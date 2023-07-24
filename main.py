@@ -6,21 +6,44 @@ import openai
 import subprocess
 import sys
 import datetime
+from config import apikey
 
 
+# Function to implement chat gpt working in your system
+
+def ai(prompt):
+    openai.api_key = apikey
+    text = f"OpenAI response for Prompt: {prompt} \n *************************\n\n"
+
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    # todo: Wrap this inside of a  try catch block
+    # print(response["choices"][0]["text"])
+    text += response["choices"][0]["text"]
+    if not os.path.exists("Openai"):
+        os.mkdir("Openai")
+
+    # with open(f"Openai/prompt- {random.randint(1, 2343434356)}", "w") as f:
+    with open(f"Openai/{''.join(prompt.split('intelligence')[1:]).strip()}.txt", "w") as f:
+        f.write(text)
 
 
-#For selecting the voice type
+# For selecting the voice type
 
 engine = pyttsx3.init()
-voices=engine.getProperty('voices')
+voices = engine.getProperty('voices')
 selected_voice_idx = 1
 engine.setProperty('voice', voices[selected_voice_idx].id)
 
 
-
-def say(text, rate= 100):
-
+def say(text, rate=150):
     engine.say(text)
     engine.runAndWait()
 
@@ -30,7 +53,7 @@ def takeCommand():
     with sr.Microphone() as source:
         r.pause_threshold = 1  # if there is pause of 1 sec, the listening will stop
         r.energy_threshold = 100  # energy smaller than 100 will not be recognizable
-        audio = r.listen(source, 0, 5)
+        audio = r.listen(source, 0, 8)
         try:
             query = r.recognize_google(audio, language="en-in")
             print(f"User said: {query}")
@@ -79,19 +102,15 @@ sites = [["youtube", "https://www.youtube.com"], ["google", "https://www.google.
          ["geeks for geeks", "https://www.geeksforgeeks.com"], ["github", "https://www.github.com"],
          ["facebook", "https://www.facebook.com"],
          ["instagram", "https://www.instagram.com"], ["erp", "https://student.gehu.ac.in/"],
-         ["aniwatch", "https://www.aniwatch.to"],a
+         ["aniwatch", "https://www.aniwatch.to"],
          ["weather report", "https://www.accuweather.com"], ["gmail", "https://www.gmail.com"],
          ["coursera", "https://www.coursera.org"]]
-
 
 applications = [
     [r"D:\setups\telegram\Telegram Desktop\Telegram.exe", "Telegram"],
     [r"D:\Applications\Application2\application2.exe", "Application 2"],
 
 ]
-
-
-
 
 if __name__ == '__main__':
     say("Hello Sir .......... My name is Ava ............... I am a basic AI assistant ...................What you want me to do, sir?")
@@ -108,15 +127,15 @@ if __name__ == '__main__':
                 webbrowser.open(site[1])
                 say(f"Opening {site[0]} as per your command sir ....")
 
-
         if 'open music' in query:
-            song_list = [["song one", r"C:\Users\HP\Downloads\song1.mp3"], ["song two", r"C:\Users\HP\Downloads\song2.mp3"]]
+            song_list = [["song one", r"C:\Users\HP\Downloads\song1.mp3"],
+                         ["song two", r"C:\Users\HP\Downloads\song2.mp3"]]
             say("Sure! Please tell me the name of the song you want to play")
             user_input = takeCommand()
             play_music(song_list, user_input)
 
         if "time" in query:
-            strfTime=datetime.datetime.now().strftime("%H:%M:%S")
+            strfTime = datetime.datetime.now().strftime("%H:%M:%S")
             say(f"Sir the time is {strfTime}")
 
         if "open" in query.lower():
@@ -126,5 +145,5 @@ if __name__ == '__main__':
                 if open_application(application_name):
                     continue;
 
-
-
+        elif "Using artificial intelligence".lower() in query.lower():
+            ai(prompt=query)
