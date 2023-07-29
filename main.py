@@ -9,6 +9,37 @@ import datetime
 from config import apikey
 
 
+
+
+
+
+
+
+chatStr = ""
+def chat(query):
+    global chatStr
+    print(chatStr)
+    openai.api_key = apikey
+    chatStr += f"Suyash: {query}\n Ava: "
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt= chatStr,
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    # todo: Wrap this inside of a  try catch block
+    say(response["choices"][0]["text"])
+    chatStr += f"{response['choices'][0]['text']}\n"
+    return response["choices"][0]["text"]
+
+
+
+
+
+
 # Function to implement chat gpt working in your system
 
 def ai(prompt):
@@ -24,8 +55,7 @@ def ai(prompt):
         frequency_penalty=0,
         presence_penalty=0
     )
-    # todo: Wrap this inside of a  try catch block
-    # print(response["choices"][0]["text"])
+
     text += response["choices"][0]["text"]
     if not os.path.exists("Openai"):
         os.mkdir("Openai")
@@ -147,3 +177,9 @@ if __name__ == '__main__':
 
         elif "Using artificial intelligence".lower() in query.lower():
             ai(prompt=query)
+
+        elif "Bye".lower() in query.lower():
+            exit()
+
+        else:
+            chat(query)
