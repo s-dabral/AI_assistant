@@ -8,14 +8,9 @@ import sys
 import datetime
 from config import apikey
 
-
-
-
-
-
-
-
 chatStr = ""
+
+
 def chat(query):
     global chatStr
     print(chatStr)
@@ -23,7 +18,7 @@ def chat(query):
     chatStr += f"Suyash: {query}\n Ava: "
     response = openai.Completion.create(
         model="text-davinci-003",
-        prompt= chatStr,
+        prompt=chatStr,
         temperature=0.7,
         max_tokens=256,
         top_p=1,
@@ -34,10 +29,6 @@ def chat(query):
     say(response["choices"][0]["text"])
     chatStr += f"{response['choices'][0]['text']}\n"
     return response["choices"][0]["text"]
-
-
-
-
 
 
 # Function to implement chat gpt working in your system
